@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Форма для заполнения</title>
+</head>
+<body>
+<div>
+    <form th:object="${document}" th:action="'/documents/form'" method="post">
+        <input type="hidden" th:field="*{name}">
+        <table border="0">
+            <tr>
+                <td>Шаблон:</td>
+                <td th:text="*{name}"></td>
+            </tr>
+            <tr>
+                <td>Имя документа:</td>
+                <td>
+                    <input type="text" id="resultName" name="resultName"
+                           th:value="${resultName}">
+                </td>
+            </tr>
+            <div th:each="tag : *{tags_values.entrySet()}">
+                <tr>
+                    <td>
+                        <label th:for="*{tags_values['__${tag.key}__']}" th:text="${tag.key}">tagKey</label>
+                    </td>
+                    <td>
+                        <input type="text" class="form-control" th:field="*{tags_values['__${tag.key}__']}"/>
+                    </td>
+                </tr>
+            </div>
+<!--            <div th:each="template : *{templates.entrySet()}">-->
+<!--                <tr>-->
+<!--                    <td colspan="2" th:text="template.key">-->
+
+<!--                    </td>-->
+<!--                </tr>-->
+<!--                <div th:each="attribute : ${template.value.attributeForDocParsers}">-->
+<!--                    <tr>-->
+<!--                        <td>-->
+<!--                            <div th:text="${attribute.code}"></div>-->
+<!--                        <td>-->
+<!--                        <td>-->
+<!--                            <input type="text" class="form-control" th:field="${attribute.value}"/>-->
+<!--                        <td>-->
+<!--                    </tr>-->
+<!--                </div>-->
+<!--            </div>-->
+        </table>
+        <button type="submit"> Generate</button>
+    </form>
+    <br/>
+</div>
+</body>
+</html>

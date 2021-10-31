@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Список документов</title>
+</head>
+<body>
+<form th:action="'/documents/form/'" method="GET">
+  <table border="0">
+    <tr>
+      <td>Шаблон:</td>
+      <td>
+        <select name="templateName" id="template">
+          <option th:each="template : ${templates}"  th:value="${template}" th:text="${template}"></option>
+        </select>
+      </td>
+    </tr>
+  </table>
+  <button type="submit"> Continue </button>
+</form>
+</body>
+</html>
