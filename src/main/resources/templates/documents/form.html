@@ -3,52 +3,67 @@
 <head>
     <meta charset="UTF-8">
     <title>Форма для заполнения</title>
+    <link rel="stylesheet" type="text/css" media="all" th:href="@{/css/style.css}" />
 </head>
 <body>
-<div>
-    <form th:object="${document}" th:action="'/documents/form'" method="post">
+<div id="header"><h1>Документы</h1></div>
+<div id="sidebar">
+    <p><a href="/">На главную страницу</a></p>
+    <p><a href="/documents/list">Шаблоны</a></p>
+    <p><a href="/documents/myDocs">Документы</a></p>
+</div>
+<div id="content">
+    <form style="width: 100%" th:object="${document}" th:action="'/documents/form'" method="post">
         <input type="hidden" th:field="*{name}">
-        <table border="0">
+        <table class="table">
             <tr>
-                <td>Шаблон:</td>
-                <td th:text="*{name}"></td>
+                <td colspan="2" th:text="*{name}"
+                    style="width: 100%; font-size: 25px; text-align: center"></td>
             </tr>
             <tr>
-                <td>Имя документа:</td>
-                <td>
-                    <input type="text" id="resultName" name="resultName"
+                <td style="text-align: right">Имя документа:</td>
+                <td style="width: 80%">
+                    <input style="height: 18px; width: 95%; max-width: unset; background: #ffffef"
+                           type="text" id="resultName" name="resultName"
                            th:value="${resultName}">
                 </td>
             </tr>
             <div th:each="tag : *{tags_values.entrySet()}">
                 <tr>
-                    <td>
-                        <label th:for="*{tags_values['__${tag.key}__']}" th:text="${tag.key}">tagKey</label>
+                    <td style="text-align: right">
+                        <label style="width: 95%" th:for="*{tags_values['__${tag.key}__']}"
+                               th:text="${tag.key} + ':'">tagKey</label>
                     </td>
                     <td>
-                        <input type="text" class="form-control" th:field="*{tags_values['__${tag.key}__']}"/>
+                        <input style="height: 18px; width: 95%; max-width: unset; background: #ffffef"
+                               type="text" class="form-control"
+                               th:field="*{tags_values['__${tag.key}__']}"/>
                     </td>
                 </tr>
             </div>
-<!--            <div th:each="template : *{templates.entrySet()}">-->
-<!--                <tr>-->
-<!--                    <td colspan="2" th:text="template.key">-->
+            <!--            <div th:each="template : *{templates.entrySet()}">-->
+            <!--                <tr>-->
+            <!--                    <td colspan="2" th:text="template.key">-->
 
-<!--                    </td>-->
-<!--                </tr>-->
-<!--                <div th:each="attribute : ${template.value.attributeForDocParsers}">-->
-<!--                    <tr>-->
-<!--                        <td>-->
-<!--                            <div th:text="${attribute.code}"></div>-->
-<!--                        <td>-->
-<!--                        <td>-->
-<!--                            <input type="text" class="form-control" th:field="${attribute.value}"/>-->
-<!--                        <td>-->
-<!--                    </tr>-->
-<!--                </div>-->
-<!--            </div>-->
+            <!--                    </td>-->
+            <!--                </tr>-->
+            <!--                <div th:each="attribute : ${template.value.attributeForDocParsers}">-->
+            <!--                    <tr>-->
+            <!--                        <td>-->
+            <!--                            <div th:text="${attribute.code}"></div>-->
+            <!--                        <td>-->
+            <!--                        <td>-->
+            <!--                            <input type="text" class="form-control" th:field="${attribute.value}"/>-->
+            <!--                        <td>-->
+            <!--                    </tr>-->
+            <!--                </div>-->
+            <!--            </div>-->
+            <tr>
+                <td colspan="2">
+                    <button class="complete-button" type="submit"> Generate</button>
+                </td>
+            </tr>
         </table>
-        <button type="submit"> Generate</button>
     </form>
     <br/>
 </div>

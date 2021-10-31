@@ -1,0 +1,23 @@
+# Spring Boot configuration
+spring:
+  # Database connection
+  datasource:
+    url: jdbc:postgresql://localhost:5432/documents_db
+    username: root
+    password: root
+    driver-class-name: org.postgresql.Driver
+  # JPA properties
+  jpa:
+    hibernate:
+      ddl-auto: update
+    show-sql: true
+    database: postgresql
+    database-platform: org.hibernate.dialect.PostgreSQLDialect
+    open-in-view: false
+    generate-ddl: true
+#Security
+security:
+  auth:
+    jwt:
+      secret: '53029a93fd5247548622567d4251a557'
+      expire-time-min: 525600

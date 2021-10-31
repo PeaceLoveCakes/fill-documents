@@ -14,8 +14,8 @@
 </div>
 <div id="content">
   <h2>Список документов</h2>
-  <div th:each="template : ${templates}">
-    <p><a th:href="'/documents/form?template=' + ${template}" th:text="${template}"></a></p>
+  <div th:each="docName : ${docNames}">
+    <p><a th:href="'/documents/myDocs/download?docName=' + ${docName}" th:text="${docName}"></a></p>
   </div>
 </div>
 </body>
