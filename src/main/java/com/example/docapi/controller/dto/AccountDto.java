@@ -21,7 +21,9 @@ public class AccountDto {
                 .setId(account.getId())
                 .setUsername(account.getUsername())
                 .setNickname(account.getNickname())
-                .setRoles(account.getRoles().stream().map(RoleDto::from).collect(Collectors.toList()));
+                .setRoles(account.getRoles() != null
+                        ? account.getRoles().stream().map(RoleDto::from).collect(Collectors.toList())
+                        : null);
     }
 
 }

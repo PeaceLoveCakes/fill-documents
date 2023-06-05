@@ -36,7 +36,7 @@ public class Account {
     @Column(name = "NICKNAME")
     private String nickname;
 
-    @ManyToMany(fetch = FetchType.LAZY)
+    @ManyToMany(fetch = FetchType.EAGER)
     @JoinTable(name = "ACCOUNTS_ROLES",
             joinColumns = {@JoinColumn(name = "USER_ID", referencedColumnName = "USER_ID")},
             inverseJoinColumns = {@JoinColumn(name = "ROLE_ID", referencedColumnName = "ROLE_ID")})

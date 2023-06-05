@@ -14,14 +14,14 @@ import org.springframework.web.bind.annotation.RestController;
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/auth")
-public class AuthenticationRestController {
+public class AuthenticationController {
 
     private final AccountService accountService;
 
     @PostMapping("/login")
     public AuthenticatedUserDto login(@RequestBody CredentialsDto credentialsDto) {
         return new AuthenticatedUserDto()
-                .setUser(AccountDto.from(accountService.findByUsername(credentialsDto.getUsername())))
+                .setAccount(AccountDto.from(accountService.findByUsername(credentialsDto.getUsername())))
                 .setToken(accountService.authenticate(credentialsDto));
     }
 

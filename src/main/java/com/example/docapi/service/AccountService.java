@@ -28,12 +28,11 @@ public class AccountService {
     private final AuthenticationManager authenticationManager;
     private final JwtTokenProvider jwtTokenProvider;
 
-
     public Account register(CredentialsDto credentialsDto) {
         return register(new Account()
                 .setUsername(credentialsDto.getUsername())
                 .setPassword(credentialsDto.getPassword())
-                .setNickname(credentialsDto.getFullName()));
+                .setNickname(credentialsDto.getNickname()));
     }
 
     public Account register(Account account) {
@@ -48,8 +47,8 @@ public class AccountService {
         return accountRepository.findByUsername(username).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
-    public Optional<Account> findById(Long id) {
-        return Optional.of(accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found")));
+    public Account findById(Long id) {
+        return accountRepository.findById(id).orElseThrow(() -> new EntityNotFoundException("User not found"));
     }
 
     public List<Account> getAllUsers() {

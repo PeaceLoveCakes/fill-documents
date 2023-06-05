@@ -70,10 +70,11 @@
             <artifactId>lombok</artifactId>
             <optional>true</optional>
         </dependency>
-        <!--Thymeleaf-->
+        <!--Tmp-files-->
         <dependency>
-            <groupId>org.springframework.boot</groupId>
-            <artifactId>spring-boot-starter-thymeleaf</artifactId>
+            <groupId>com.antkorwin</groupId>
+            <artifactId>ioutils</artifactId>
+            <version>0.8</version>
         </dependency>
     </dependencies>
 

@@ -13,6 +13,6 @@ public class CredentialsDto {
     private String username;
     @NotNull
     private String password;
-    private String fullName;
+    private String nickname;
 
 }

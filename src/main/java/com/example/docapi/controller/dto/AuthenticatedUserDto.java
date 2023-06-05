@@ -7,7 +7,7 @@ import lombok.Setter;
 @Setter
 public class AuthenticatedUserDto {
 
-    private AccountDto user;
+    private AccountDto account;
     private String token;
 
 }
