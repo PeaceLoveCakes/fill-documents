@@ -13,6 +13,7 @@ import org.springframework.core.io.ByteArrayResource;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.CrossOrigin;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -26,6 +27,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
+@CrossOrigin
 @RestController
 @RequiredArgsConstructor
 @RequestMapping(value = "/api/template")
@@ -56,7 +58,7 @@ public class MainController {
         TemplateDto templateDto = TemplateDto.from(templateRepository.findById(templateId)
                 .orElseThrow(() -> new BadRequestException("Template not found")));
         templateDto.setAttributes(
-                attributeRepository.findAllByTemplateIdAndParentIsNull(templateId)
+                attributeRepository.findAllByTemplateIdAndParentIdIsNull(templateId)
                         .stream().map(AttributeDto::from)
                         .collect(Collectors.toList()));
         return templateDto;

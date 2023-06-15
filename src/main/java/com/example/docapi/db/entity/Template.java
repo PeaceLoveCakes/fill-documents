@@ -2,6 +2,7 @@ package com.example.docapi.db.entity;
 
 import lombok.Getter;
 import lombok.Setter;
+import org.hibernate.annotations.Fetch;
 import org.hibernate.annotations.Type;
 
 import javax.persistence.CascadeType;
@@ -14,8 +15,8 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
-import java.sql.Blob;
 import java.util.Set;
 
 @Entity
@@ -35,7 +36,7 @@ public class Template {
     @Column(name = "TYPE")
     private String type;
 
-    @Lob
+    @Lob()
     @Type(type = "org.hibernate.type.BinaryType")
     @Column(name = "data")
     private byte[] data;
@@ -44,6 +45,7 @@ public class Template {
     private Account author;
 
     @OneToMany(fetch = FetchType.EAGER,mappedBy = "template", cascade= CascadeType.ALL)
+    @OrderColumn
     private Set<Attribute> attributes;
 
 }

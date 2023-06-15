@@ -8,5 +8,5 @@ import java.util.List;
 
 @Repository
 public interface AttributeRepository extends JpaRepository<Attribute, Long> {
-    List<Attribute> findAllByTemplateIdAndParentIsNull(Long id);
+    List<Attribute> findAllByTemplateIdAndParentIdIsNull(Long id);
 }

@@ -76,6 +76,12 @@
             <artifactId>ioutils</artifactId>
             <version>0.8</version>
         </dependency>
+        <!--icu4j-->
+        <dependency>
+            <groupId>com.ibm.icu</groupId>
+            <artifactId>icu4j</artifactId>
+            <version>73.2</version>
+        </dependency>
     </dependencies>
 
     <build>

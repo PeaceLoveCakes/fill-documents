@@ -7,7 +7,6 @@ import lombok.experimental.UtilityClass;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -24,12 +23,20 @@ public class ParsingLogic {
     private static final String CLOSE_TAG = ">";
     private static final Pattern TAG_PATTERN = Pattern.compile(String.format("%s[%s][%s\\s]+%s", OPEN_TAG, ALLOWED_SIGNS, ALLOWED_SIGNS, CLOSE_TAG));
 
-    public Set<AttributeDto> findAttributes(File file) {
+    private String wrap(String string) {
+        return OPEN_TAG + string + CLOSE_TAG;
+    }
+
+    private String unwrap(String string) {
+        return string.substring(OPEN_TAG.length(), string.length() - CLOSE_TAG.length());
+    }
+
+    public List<AttributeDto> findAttributes(File file) {
         return findAttributes(docService.findByRegex(file, TAG_PATTERN));
     }
 
-    public Set<AttributeDto> findAttributes(Set<String> tags){
-        Set<AttributeDto> attributeDtos = new HashSet<>();
+    public List<AttributeDto> findAttributes(Set<String> tags) {
+        List<AttributeDto> attributeDtos = new ArrayList<>();
         for (String tag : tags) {
             attributeDtos.add(attributeDtoFromTag(tag.substring(OPEN_TAG.length(), tag.length() - CLOSE_TAG.length())));
         }
@@ -38,51 +45,54 @@ public class ParsingLogic {
     }
 
     private AttributeDto attributeDtoFromTag(String tag) {
-        AttributeDto attribute = new AttributeDto();
-        if(tag.contains(".")) {
-            Set<AttributeDto> childes = new HashSet<>();
+        AttributeDto attributeDto = new AttributeDto();
+        if (tag.contains(".")) {
+            List<AttributeDto> childes = new ArrayList<>();
             childes.add(attributeDtoFromTag(tag.substring(tag.indexOf('.') + 1).trim()));
-            attribute
+            attributeDto
                     .setName(tag.substring(0, tag.indexOf('.')).trim())
                     .setChildes(childes);
         } else {
-            attribute
+            attributeDto
                     .setName(tag)
-                    .setChildes(new HashSet<>());
+                    .setChildes(new ArrayList<>());
         }
-        return attribute;
+        return attributeDto;
     }
 
-    private static Set<AttributeDto> mergeAttributes(Set<AttributeDto> attributeDtos) {
-        if (attributeDtos == null || attributeDtos.isEmpty()) return new HashSet<>();
+    private static List<AttributeDto> mergeAttributes(List<AttributeDto> attributeDtos) {
+        if (attributeDtos == null || attributeDtos.isEmpty()) return new ArrayList<>();
         List<AttributeDto> attributesList = new ArrayList<>(attributeDtos);
         AttributeDto attribute = attributesList.remove(0);
-        Set<AttributeDto> childes = attribute.getChildes();
-        for (AttributeDto attributeDto : attributesList){
-            if (attributeDto.getName().equals(attribute.getName())){
+        List<AttributeDto> childes = attribute.getChildes();
+        for (AttributeDto attributeDto : attributesList) {
+            if (attributeDto.getName().equals(attribute.getName())) {
                 childes.addAll(attributeDto.getChildes());
             }
         }
         attribute.setChildes(mergeAttributes(attribute.getChildes()));
-        Set<AttributeDto> result = mergeAttributes(attributesList.stream()
+        List<AttributeDto> result = mergeAttributes(attributesList.stream()
                 .filter(attributeDto -> !attributeDto.getName().equals(attribute.getName()))
-                .collect(Collectors.toSet()));
+                .collect(Collectors.toList()));
         result.add(attribute);
         return result;
     }
 
-    public Map<String, String> attributeDtoToMap(List<AttributeDto> attributeDtos){
+    public Map<String, String> attributeDtoToMap(List<AttributeDto> attributeDtos) {
         return attributeDtos.stream()
                 .map(ParsingLogic::attributeDtoToMap)
-                .flatMap (map -> map.entrySet().stream())
+                .flatMap(map -> map.entrySet().stream())
                 .collect(Collectors.toMap(Map.Entry::getKey,
                         Map.Entry::getValue));
-}
+    }
 
     public Map<String, String> attributeDtoToMap(AttributeDto attributeDto) {
         Map<String, String> map = new HashMap<>();
         if (attributeDto.getChildes() == null || attributeDto.getChildes().isEmpty()) {
-            map.put(OPEN_TAG + attributeDto.getName() + CLOSE_TAG, attributeDto.getValue());
+            map.put(OPEN_TAG + attributeDto.getName() + CLOSE_TAG,
+                    attributeDto.getValue() == null
+                            ? ""
+                            : attributeDto.getValue());
         } else {
             String nextPrefix = attributeDto.getName();
             Map<String, String> childesMap = attributeDto.getChildes().stream().map(child -> attributeDtoToMap(child, nextPrefix))
@@ -97,7 +107,10 @@ public class ParsingLogic {
     public Map<String, String> attributeDtoToMap(AttributeDto attributeDto, String prefix) {
         Map<String, String> map = new HashMap<>();
         if (attributeDto.getChildes() == null || attributeDto.getChildes().isEmpty()) {
-            map.put(OPEN_TAG + prefix + "." + attributeDto.getName() + CLOSE_TAG, attributeDto.getValue());
+            map.put(OPEN_TAG + prefix + "." + attributeDto.getName() + CLOSE_TAG,
+                    attributeDto.getValue() == null
+                            ? ""
+                            : attributeDto.getValue());
         } else {
             String nextPrefix = prefix + "." + attributeDto.getName();
             Map<String, String> childesMap = attributeDto.getChildes().stream().map(child -> attributeDtoToMap(child, nextPrefix))
@@ -109,57 +122,7 @@ public class ParsingLogic {
         return map;
     }
 
-    public void replaceContent(File input, File output, Map<String, String> replaces){
+    public void replaceContent(File input, File output, Map<String, String> replaces) {
         docService.replaceContent(input, output, replaces);
     }
-
-
-//    public String parseStringByTags(String input, Map<String, String> tags_values) {
-//        String result = input;
-//
-//        for (String key : tags_values.keySet()) {
-//            result = result.replaceAll("<!" + key + ">",
-//                    tags_values.get(key).isEmpty() ? "" : tags_values.get(key));
-//        }
-//
-//        return result;
-//    }
-//
-//    public String parseStringByTemplates(String input, Map<String, DpsTemplate> templates) {
-//        String result = input;
-//
-//        for (String key : templates.keySet()) {
-//            for (DpsAttribute dpsAttribute : templates.get(key).getAttributesForDocParser()) {
-//                if (!(dpsAttribute.getValue() == null || dpsAttribute.getValue().isEmpty())) {
-//                    result = result.replaceAll(
-//                            String.format("<%s.%s>", key, dpsAttribute.getCode()),
-//                            dpsAttribute.getValue());
-//                }
-//            }
-//        }
-//        return result;
-//    }
-//
-//    private Map<String, DpsTemplate> extractTemplates(String content, Map<String, DpsTemplate> templates) {
-//
-//        Matcher matcher = TEMPLATE_PATTERN.matcher(content);
-//
-//        while (matcher.find()) {
-//            String temp = content.substring(matcher.start() + 1, matcher.end() - 1);
-//            String tKey = temp.replaceAll("<[.*[.]]", "");
-//            String aCode = temp.replaceAll("[[.].*]>", "");
-//            DpsTemplate dpsTemplate;
-//            DpsAttribute dpsAttribute = new DpsAttribute().setCode(aCode);
-//            if (templates.containsKey(tKey)) {
-//                if (templates.get(tKey) != null) {
-//                    dpsTemplate = templates.get(tKey);
-//                } else dpsTemplate = new DpsTemplate();
-//                if (!dpsTemplate.getAttributesForDocParser().contains(dpsAttribute)) {
-//                    dpsTemplate.addAttribute(dpsAttribute);
-//                }
-//            } else dpsTemplate = new DpsTemplate().addAttribute(dpsAttribute);
-//            templates.put(tKey, dpsTemplate);
-//        }
-//        return templates;
-//    }
 }

@@ -13,8 +13,10 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderColumn;
 import javax.persistence.Table;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 @Table(name = "ATTRIBUTES")
@@ -30,12 +32,16 @@ public class Attribute {
     @Column(name = "NAME")
     private String name;
 
-    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
-    @JoinColumn(name = "PARENT_ID")
-    private Attribute parent;
+//    @ManyToOne(fetch = FetchType.LAZY, cascade = CascadeType.ALL)
+//    @JoinColumn(name = "PARENT_ID", updatable = false, insertable = false)
+//    private Attribute parent;
+
+    @Column(name = "PARENT_ID", updatable = false, insertable = false)
+    private Long parentId;
 
     @OneToMany(fetch = FetchType.EAGER, cascade = CascadeType.ALL)
-    @JoinColumn(name = "PARENT_ID", updatable = false, insertable = false)
+    @JoinColumn(name = "PARENT_ID")
+    @OrderColumn
     private List<Attribute> childes;
 
     @ManyToOne(fetch = FetchType.LAZY)
